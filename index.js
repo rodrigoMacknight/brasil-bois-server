@@ -9,6 +9,14 @@ server.listen(8080, function() {
 
 io.on('connection', function(socket) {
     console.log("player connected");
+
+
+    socket.on('placeCard', function(resp){
+		console.log(resp);
+		socket.emit('enemyCardPlaced', resp);
+		
+	});
+
     socket.on('disconnect', function() {
         console.log("player disconected");
     })
