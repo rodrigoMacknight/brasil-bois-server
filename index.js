@@ -31,7 +31,7 @@ io.on('connection', function(socket) {
 
     socket.on('useMagicCard', function(resp) {
         console.log("useMagicCard: " + resp);
-        socket.broadcast.emit('magicCardUsed')
+        socket.broadcast.emit('magicCardUsed', resp)
     });
 
     socket.on('playerFound', function(resp) {
