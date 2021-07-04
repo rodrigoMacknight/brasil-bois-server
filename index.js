@@ -29,6 +29,11 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('endEnemyTurn')
     });
 
+    socket.on('useMagicCard', function(resp) {
+        console.log("useMagicCard: " + resp);
+        socket.broadcast.emit('magicCardUsed')
+    });
+
     socket.on('playerFound', function(resp) {
         console.log("playerFound: ");
         socket.broadcast.emit('playerFound');
