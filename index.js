@@ -1,59 +1,60 @@
-var app = require('express')();
+var app  = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 server.listen(8080, function() {
-        console.log("server is now running");
-});
+    console.log("Server is now running")
+}); 
 
-//configure sockets for two players
-io.on('connection', function(socket) {
-    console.log("player connected");
-    //recebeu um evento de carta colocada do player, manda para outro player o evento de carta
-    //colocada
-	socket.emit('socketId', {id: socket.id});
+var player1 = null
+var player2 = null
 
+io.on('connection', socket => {
+    console.log("player connected!");
+    setPlayer(socket)
 
-    socket.broadcast.emit('newPlayer', {id: socket.id});
+    console.log("socketId" +  socket.id)
+    addListenersOn(socket)
 
-
-    //coloca a carta do player no board do inimigo
-    socket.on('placeCard', function(resp){
-        console.log(resp);
-        socket.broadcast.emit('enemyCardPlaced', resp);
-        
-    });
-
-    socket.on('endTurn', function(resp) {
-        console.log("endTurn: " + resp);
-        socket.broadcast.emit('endEnemyTurn')
-    });
-
-    socket.on('useMagicCard', function(resp) {
-        console.log("useMagicCard: " + resp);
-        socket.broadcast.emit('magicCardUsed', resp)
-    });
-
-    socket.on('playerFound', function(resp) {
-        console.log("playerFound: ");
-        socket.broadcast.emit('playerFound');
-    });
-
-    socket.on('attackCreature', function(resp){
-        console.log(resp);
-        socket.broadcast.emit('enemyAttackedCreature', resp);
-        
-    });
-    
-
-    socket.on('attackHp', function(resp){
-        console.log(resp);
-        socket.broadcast.emit('enemyAttackedHp', resp);
-        
-    });
-
+ 
     socket.on('disconnect', function() {
         console.log("player disconected");
     })
 
 });
+
+
+function setPlayer (socket) {
+    if (player1 == null) {
+     player1 = {
+        socketId: socket.id,
+       // pSocket: socket,
+        name: "player1"
+  
+    }
+    socket.emit('playername', player1)
+    } else {
+        player2 = {
+            socketId: socket.id,
+           // pSocket: socket,
+            name: "player2"
+         }
+         var player1Start = Math.random() < 0.5;
+         var gameStarts = {
+            initPlayer: player1Start ? player1.socketId : player2.socketId,
+         };
+         socket.emit('playername', player2)
+         io.emit("gameStarted", gameStarts)
+    }
+}
+
+
+function addListenersOn(socket) {
+
+    socket.on('endTurn', function() {
+        console.log(socket.id + "endedTurn")
+        socket.broadcast.emit('endEnemyTurn')
+    })
+
+
+}
