@@ -56,5 +56,9 @@ function addListenersOn(socket) {
         socket.broadcast.emit('endEnemyTurn')
     })
 
-
+    socket.on('placeCard', function(resp){
+        console.log("player " + socket.id + "placed:" + resp);
+        socket.broadcast.emit('enemyCardPlaced', resp);
+    
+    });
 }
