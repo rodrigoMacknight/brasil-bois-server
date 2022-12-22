@@ -1,8 +1,9 @@
 var app  = require('express')();
 var server = require('http').Server(app);
+
 var io = require('socket.io')(server);
 
-server.listen(8080, function() {
+server.listen(8080,"0.0.0.0", function() {
     console.log("Server is now running")
 }); 
 
